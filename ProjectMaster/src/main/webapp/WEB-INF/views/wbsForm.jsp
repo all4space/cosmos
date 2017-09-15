@@ -39,14 +39,6 @@
 <script src="/planbe/resources/js/jquery-3.2.1.min.js"></script>	
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>		
 </head>
-<script>
-	$(function(){
-		$("text[text-anchor='start']").on('click', function(){
-			alert("alert!!!");
-		});
-	});
-	
-</script>
 
 <script>
 
@@ -58,7 +50,6 @@
 		});
 
  */	
-    
 
 
 /* start : WBS 트리 생성 */
@@ -75,11 +66,6 @@ google.charts.setOnLoadCallback(drawSimpleNodeChart);
  
  var jj; 
  var array2;
- 
-$(function(){
-	
-	
-})
  
 function drawSimpleNodeChart(p_name, t_list, m_list) {
     
@@ -255,24 +241,31 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	    alert( $(this).find(":selected").val() );
 	});
 	 */
-	
+	 
+/* contains 메소드 추가 */
+	Array.prototype.contains = function(element) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] == element) {
+				return true;
+			}
+		}
+		return false;
+	}
+	 
 /* 키워드 리스트 불러오기 */
     function memberForKey(m_list){
 	     /* 멤버리스트 중복 제거  */
 		 var array = [];
-         array.push(m_list[0]);		     
+         array.push(m_list[0]);	
 
-         for(var i=1; i<m_list.length; i++){
-			 for(var j=0; j<array.length; j++){
-        	    if(array[j] == m_list[i]){
-                   continue;
-        	    }	 
-		        array.push(m_list[i]);
-			 }//inner
-		 }//outer 
-				 
-		 alert(array);        
-		
+         for(var i=0; i<m_list.length; i++){
+            if(array.contains(m_list[i])){
+               continue;	
+            }        	
+            array.push(m_list[i]);
+         }
+		// alert(array);        
+         
 		 var data = "<option>-Select Keyword-</option>"
 		          + "<optgroup label='Priority'>"
                   +	"<option value='high'>High</option>"
@@ -295,9 +288,6 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		 $("#selectError").trigger("liszt:updated");
     }
 	   
-                    
-
-
 
 /* 키워드별 TaskList 가져오기 */
 /*    var select = document.getElementById("select_id");
@@ -482,12 +472,10 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	
 /* Gantt : gantt 페이지로 이동 */	
 	function showGantt(){
-		location.href="/planbe/gantt/ganttForm";
+		location.href="/planbe/gantt/ganttForm?projectNo=" + p_no; // url 확인해서 변경 필요.
 	}
 
 
-	
-  
 /* TEST */  
  // alert(nodeListData.getColumnLabel(0)); // id 
  // alert(nodeListData.getColumnProperties(0));   // [object, Object]
@@ -496,8 +484,6 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
  // alert(nodeListData.getValue(0, 0));           // 0
  // alert(nodeListData.getNumberOfColumns());     // 5 
 	
-
-    
 </script>
 
 <body>
@@ -541,7 +527,6 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	
 <!-- ========================================================================================================================== -->
 
-	
 			
 <!-- 키워드 리스트 -->			
 				<div class="box span2">
@@ -555,8 +540,6 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 					</div>
 					<div class="box-content">
 			
-					
-					
 					
 						<table class="table table-bordered table-striped">
 							<tbody>
@@ -653,7 +636,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 							</div>
 	                        <div class="box-content" />
 
-<!-- 키워드 드롭다운 -->
+<!-- start : 키워드 드롭다운 -->
 						  <div class="control-group" style="float: right;">
 							<!-- 	<label class="control-label" for="selectError">Keyword Select</label> -->
 								<div class="controls">
@@ -661,20 +644,16 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 								  </select>
 								</div>
 						 </div>
-<!-- 키워드 드롭다운 -->		
-	                        
-	                        
-	                        
-                                  
-                                  <div id="wordtree_explicit" style="width: 850px; height: 500px;"></div>	
-									<button class="btn btn-small btn-danger" onclick="deleteWbs()">Delete WBS</button>
-									<button class="btn btn-small btn-warning" onclick="showGantt()">Show Gantt</button>
-							</div>
+<!-- end : 키워드 드롭다운 -->		
+
+<!-- WBS 삭제 / Gantt 링크 버튼   -->                                  
+                          <div id="wordtree_explicit" style="width: 850px; height: 500px;"></div>	
+							    <button class="btn btn-small btn-danger" onclick="deleteWbs()">Delete WBS</button>
+							    <button class="btn btn-small btn-warning" onclick="showGantt()">Show Gantt</button>
+						  </div>
 			      </div>
-							<div>
-						<!-- 	     <input type=button value="changeForm" onclick="changeFormat()"> -->
-							</div>
 			  </div>
+							
 <!-- end: WBS 트리 박스 -->
 	
 <!-- start: Task List 박스 -->	
@@ -835,64 +814,43 @@ Task 삭제			    <i class="halflings-icon white trash" onclick="deleteTask()"><
 
 	</footer>
 	
-	
+<!--========================================================================================================= -->	
 <!-- start: JavaScript-->
-
 		<script src="/planbe/resources/bootstrap/js/jquery-1.9.1.min.js"></script>
 	    <script src="/planbe/resources/bootstrap/js/jquery-migrate-1.0.0.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery-ui-1.10.0.custom.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.ui.touch-punch.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/modernizr.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/bootstrap.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.cookie.js"></script>
-	
 		<script src='/planbe/resources/bootstrap/js/fullcalendar.min.js'></script>
-	
 		<script src='/planbe/resources/bootstrap/js/jquery.dataTables.min.js'></script>
-
 		<script src="/planbe/resources/bootstrap/js/excanvas.js"></script>
 		<script src="/planbe/resources/bootstrap/js/jquery.flot.js"></script>
 		<script src="/planbe/resources/bootstrap/js/jquery.flot.pie.js"></script>
 		<script src="/planbe/resources/bootstrap/js/jquery.flot.stack.js"></script>
 		<script src="/planbe/resources/bootstrap/js/jquery.flot.resize.min.js"></script>
-		
 		<script src="/planbe/resources/bootstrap/js/jquery.chosen.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.uniform.min.js"></script>
-		
 		<script src="/planbe/resources/bootstrap/js/jquery.cleditor.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.noty.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.elfinder.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.raty.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.iphone.toggle.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.uploadify-3.1.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.gritter.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.imagesloaded.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.masonry.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.knob.modified.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/jquery.sparkline.min.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/counter.js"></script>
-	
 		<script src="/planbe/resources/bootstrap/js/retina.js"></script>
-
 		<script src="/planbe/resources/bootstrap/js/custom.js"></script>
 <!-- end: JavaScript-->
 	
 </body>
 </html>
+	
+	
+
+	
