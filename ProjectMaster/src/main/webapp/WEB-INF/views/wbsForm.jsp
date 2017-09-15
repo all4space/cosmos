@@ -262,7 +262,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
          }
 		// alert(array);        
          
-		 var data = "<option>-Select Keyword-</option>"
+		 var data = "<option value='orgin'>-Select Keyword-</option>"
 		          + "<optgroup label='Priority'>"
                   +	"<option value='HIGH'>High</option>"
                   + "<option value='NORMAL'>Normal</option>" 
@@ -271,6 +271,13 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		          + "<option value='ING'>ING</option>"
 		          + "<option value='DONE'>DONE</option>"
 		          + "<option value='PLAN'>PLAN</option></optgroup>"
+		          + "<optgroup label='%DONE'>"
+		          + "<option value=0>0%</option>"
+		          + "<option value=20>20%</option>"
+		          + "<option value=40>40%</option>"
+		          + "<option value=60>60%</option>"
+		          + "<option value=80>80%</option>"
+		          + "<option value=100>100%</option></optgroup>"
 		          + "<optgroup label='Member'>";
 		          
          $(array).each(function(index, item) {
@@ -287,17 +294,29 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		 
     }
 		
-/* Key 이벤트 : key 에 해당하는 Task로만 트리 구조화  */
+		
+/* Key 이벤트 : key 에 해당하는 Task로만 트리 시각화  */
     function keyAction(p_name, t_list, m_list){
     
     	$("#selectError").on('change', function() {
-    		 alert( this.value );
     		 
     		 var key = this.value;
              var keyTask = []; 
              var keyMember = [];
              
+             alert(key);
+             /* 전체 Task 보기(original) */
+             if("origin" == key){
+            	 alert("오리진"); // 아니 왜 안 들어와...
+            	 drawSimpleNodeChart(p_name, t_list, m_list); 
+             }
+             
+             /* 키워드별 Task 보기 */
              for(var i=0; i<t_list.length; i++){
+                 
+            	 var doneTime = t_list[i].doneTime.toFixed(2);
+            	 var totalTime = t_list[i].totalTime.toFixed(2); 
+            	 var rate = (doneTime/totalTime).toFixed(2); 
             	 
             	 if(t_list[i].taskPriority == key){
             		 keyTask.push(t_list[i]); 
@@ -308,25 +327,16 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
             	 } else if(m_list[i] == key){
             		 keyMember.push(m_list[i]);
             		 keyTask.push(t_list[i]);
+            	 } else if((key*1 <= rate*100) && (rate*100 < (key*1+20))){
+            		 keyTask.push(t_list[i]);
+            		 keyMember.push(m_list[i]);
             	 }
              }//for
+            		 
              drawSimpleNodeChart(p_name, keyTask, keyMember);
     	});
      }	   
              
-
-/* 키워드별 TaskList 가져오기 */
-/*    var select = document.getElementById("select_id");
-   var option_value = select.options[select.selectedIndex].value;
-   var option_text   = select.options[select.selectedIndex].text;
-   
-   // function TaskByKey(){
-	   alert($("#selectError option:selected").val());
-   // }
-    */
-
-
-	
 	
 /* WBS 노드 정보 불러오기 */ 
    // var p_list = "<c:out value='${p_list}'/>";
@@ -357,7 +367,6 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	}
 	
 		    	
-      
 /* projectName 클릭시, 프로젝트의 전체 taskList 가져오기 */	
 	function getAllTaskInfo(taskList, memberList){
         
@@ -398,7 +407,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 /* 개별 TaskInfo 가져오기 */
 	function getTaskInfo(selectTask, selectMember){
 	   		
-	     $("#ttt").attr("class" , "table table-striped table-bordered bootstrap-datatable datatable");
+	   //  $("#ttt").attr("class" , "table table-striped table-bordered bootstrap-datatable datatable");
 	     
 	     $(".T_INFO").empty();
 	     $(".T_INFO").append("<tr><td class='center' id='member'><button class='btn btn-small btn-inverse'>" + selectMember + "</button>"
@@ -553,8 +562,138 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	
 <!-- ========================================================================================================================== -->
 
+								
+<!-- start : 프로젝트 리스트  -->			
+	<div class="row-fluid sortable">	
+				<div class="box span12">
+					<div class="box-header">
+						<h2><i class="halflings-icon white align-justify"></i><span class="break"></span>Project List</h2>
+						<div class="box-icon">
+							<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+					
+						<table class="table table-striped table-bordered bootstrap-datatable datatable">
+							  <thead>
+								  <tr>
+									  <th>Project Name</th>
+									  <th>Project Content</th>
+									  <th>Project Status</th>
+									  <th>Start Date</th>
+									  <th>Due Date</th>
+									  <th>Authority</th>                                          
+								  </tr>
+							  </thead>   
+							  <tbody>
+							  <c:forEach items="${p_list}" var="vo" varStatus="status">
+								<tr>
+									<td class="center">
+									<button class="btn btn-mini btn-success" onclick="getWbs(${vo.projectNo})">${vo.projectName}</button>
+									</td>                                       
+									<td class="center">${vo.projectContent}</td>
+									<td class="center">${vo.projectStatus}</td>
+									<td class="center">${vo.startDate}</td>
+									<td class="center">${vo.dueDate}</td>
+									<td class="center">${m_list[status.index].projectAuthority}</td>
+								</tr>
+							  </c:forEach>
+							  </tbody>
+						 </table>  
+					</div>
+				</div><!--/span-->
+			</div><!--/row-->
+<!-- end : 프로젝트 리스트  -->		    			
+				
+								
+<!-- start: WBS 트리 박스 -->	
+             <div class="row-fluid sortable">			   
+	             <div class="box span12">
+							
+							<div class="box-header" />
+								  <h2><i class="halflings-icon white list"></i><span class="break"></span>WBS</h2>
+								  <div class="box-icon">
+								<!-- 	<a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a> -->
+									<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
+								<!-- 	<a href="#" class="btn-close"><i class="halflings-icon white remove"></i></a> -->
+								  </div>
+							</div> <!-- header -->
+							
+	                        <div class="box-content" />
+
+<!-- start : 키워드 드롭다운 -->
+							<div class="control-group" style="float: right;"/>
+									<div class="controls">
+									  <select id="selectError" data-rel="chosen">
+									  </select>
+									</div>
+							</div>
+<!-- end : 키워드 드롭다운 -->		
+
+<!-- WBS 삭제 / Gantt 링크 버튼   -->                                  
+                          <div id="wordtree_explicit" style="width: 850px; height: 600px;"></div>	
+							    <button class="btn btn-small btn-danger" onclick="deleteWbs()">Delete WBS</button>
+							    <button class="btn btn-small btn-warning" onclick="showGantt()">Show Gantt</button>
+						  </div> <!-- content -->
+			      </div>
+			  </div>
+							
+<!-- end: WBS 트리 박스 -->
+	
+<!-- start: Task List 박스 -->	
+		<div class="row-fluid sortable">		
+				<div class="box span12">
+					<div class="box-header" data-original-title>
+						<h2><i class="halflings-icon white user"></i><span class="break"></span>Task List</h2>
+						<div class="box-icon">
+							<!-- <a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a> -->
+							<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+					<table id="ttt" class="table table-bordered table-striped table-condensed">
+						  <thead>
+							  <tr>
+							      <th>Member</th>
+								  <th>Task Name</th>
+								  <th>Task Content</th>
+								  <th>Task Priority</th>
+								  <th>Task Status</th>
+								  <th>Start Date</th>
+								  <th>Due Date</th>
+								  <th>Total Time</th>
+								  <th>Done Time</th>
+								  <th>Action</th>
+							  </tr>
+						  </thead>   
+<!-- TaskInfo 테이블 바디 -->		
+						  <tbody class="T_INFO">
+						  </tbody>
 			
-<!-- 키워드 리스트 -->			
+					  </table>     
+
+<!-- 				         
+							<a class="btn btn-success" href="#">
+Task 페이지로 이동	    <i class="halflings-icon white zoom-in" onclick="taskForm()"></i>  
+							</a>
+							<a class="btn btn-info" href="#">
+TaskInfo 수정		    <i class="halflings-icon white edit" onclick="editTask()"></i>  
+							</a>
+							<a class="btn btn-danger" href="#">
+Task 삭제			    <i class="halflings-icon white trash" onclick="deleteTask()"></i> 
+							</a>
+수정된 TaskInfo Update							
+                            <button class="btn btn-small btn-primary" onclick="updateWbs()">SAVE</button>
+-->
+
+					</div>
+				</div><!--/span-->
+			</div><!--/row-->
+<!-- end: Task List 박스 -->		
+	
+				
+				
+				<!-- 키워드 리스트 -->			
 				<div class="box span2">
 					<div class="box-header">
 						<h2><i class="halflings-icon white eye-open"></i><span class="break"></span>Labels</h2>
@@ -604,135 +743,6 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 					</div>
 				</div><!--/span-->
 <!-- 키워드 리스트 -->						
-			
-								
-<!-- start : 프로젝트 리스트  -->			
-	<div class="row-fluid sortable">	
-				<div class="box span12">
-					<div class="box-header">
-						<h2><i class="halflings-icon white align-justify"></i><span class="break"></span>Project List</h2>
-						<div class="box-icon">
-							<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
-						</div>
-					</div>
-					<div class="box-content">
-					
-						<table class="table table-striped table-bordered bootstrap-datatable datatable">
-							  <thead>
-								  <tr>
-									  <th>Project Name</th>
-									  <th>Project Content</th>
-									  <th>Project Status</th>
-									  <th>Start Date</th>
-									  <th>Due Date</th>
-									  <th>Authority</th>                                          
-								  </tr>
-							  </thead>   
-							  <tbody>
-							  <c:forEach items="${p_list}" var="vo" varStatus="status">
-								<tr>
-									<td class="center">
-									<button class="btn btn-mini btn-success" onclick="getWbs(${vo.projectNo})">${vo.projectName}</button>
-									</td>                                       
-									<td class="center">${vo.projectContent}</td>
-									<td class="center">${vo.projectStatus}</td>
-									<td class="center">${vo.startDate}</td>
-									<td class="center">${vo.dueDate}</td>
-									<td class="center">${m_list[status.index].projectAuthority}</td>
-								</tr>
-							  </c:forEach>
-							  </tbody>
-						 </table>  
-					</div>
-				</div><!--/span-->
-			</div><!--/row-->
-<!-- end : 프로젝트 리스트  -->		    			
-				
-								
-<!-- start: WBS 트리 박스 -->			   
-			<div class="row-fluid">	
-	             <div class="box span12">
-							<div class="box-header" />
-								  <h2><i class="halflings-icon white list"></i><span class="break"></span>WBS</h2>
-								  <div class="box-icon">
-									<a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a>
-									<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
-									<a href="#" class="btn-close"><i class="halflings-icon white remove"></i></a>
-								  </div>
-							</div>
-	                        <div class="box-content" />
-
-<!-- start : 키워드 드롭다운 -->
-						  <div class="control-group" style="float: right;">
-							<!-- 	<label class="control-label" for="selectError">Keyword Select</label> -->
-								<div class="controls">
-								  <select id="selectError" data-rel="chosen">
-								  </select>
-								</div>
-						 </div>
-<!-- end : 키워드 드롭다운 -->		
-
-<!-- WBS 삭제 / Gantt 링크 버튼   -->                                  
-                          <div id="wordtree_explicit" style="width: 850px; height: 500px;"></div>	
-							    <button class="btn btn-small btn-danger" onclick="deleteWbs()">Delete WBS</button>
-							    <button class="btn btn-small btn-warning" onclick="showGantt()">Show Gantt</button>
-						  </div>
-			      </div>
-			  </div>
-							
-<!-- end: WBS 트리 박스 -->
-	
-<!-- start: Task List 박스 -->	
-		<div class="row-fluid sortable">		
-				<div class="box span12">
-					<div class="box-header" data-original-title>
-						<h2><i class="halflings-icon white user"></i><span class="break"></span>Task List</h2>
-						<div class="box-icon">
-							<a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a>
-							<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
-						</div>
-					</div>
-					<div class="box-content">
-					<table id="ttt" class="table table-striped table-bordered bootstrap-datatable datatable">
-						  <thead>
-							  <tr>
-							      <th>Member</th>
-								  <th>Task Name</th>
-								  <th>Task Content</th>
-								  <th>Task Priority</th>
-								  <th>Task Status</th>
-								  <th>Start Date</th>
-								  <th>Due Date</th>
-								  <th>Total Time</th>
-								  <th>Done Time</th>
-								  <th>Action</th>
-							  </tr>
-						  </thead>   
-<!-- TaskInfo 테이블 바디 -->		
-						  <tbody class="T_INFO">
-						  </tbody>
-			
-					  </table>     
-
-<!-- 				         
-							<a class="btn btn-success" href="#">
-Task 페이지로 이동	    <i class="halflings-icon white zoom-in" onclick="taskForm()"></i>  
-							</a>
-							<a class="btn btn-info" href="#">
-TaskInfo 수정		    <i class="halflings-icon white edit" onclick="editTask()"></i>  
-							</a>
-							<a class="btn btn-danger" href="#">
-Task 삭제			    <i class="halflings-icon white trash" onclick="deleteTask()"></i> 
-							</a>
-수정된 TaskInfo Update							
-                            <button class="btn btn-small btn-primary" onclick="updateWbs()">SAVE</button>
--->
-
-					</div>
-				</div><!--/span-->
-			</div><!--/row-->
-<!-- end: Task List 박스 -->		
-	
 							
 <!-- 필요한 버튼 쓰려고 남겨둠 -->					
 				<div class="box span6">
@@ -808,6 +818,8 @@ Task 삭제			    <i class="halflings-icon white trash" onclick="deleteTask()"><
 				
 			</div><!--/row-->
 			
+
+
 
 	</div><!--/.fluid-container-->
 	
