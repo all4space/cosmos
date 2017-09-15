@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scit.master.planbe.dao.MemberMapper">
+
+<!-- Manager insert -->
+<insert id = "ManagerAdd" parameterType="MemberVO">
+
+	insert into member values
+	(
+		member_seq.nextval,
+		'Manager',
+		#{projectNo},
+		#{userNo},
+		#{canWork},
+		#{mustWork}
+	)
+</insert>
+
+<insert id = "MemberAdd" parameterType="MemberVO">
+
+	insert into member values
+	(
+		member_seq.nextval,
+		'Member',
+		#{projectNo},
+		#{userNo},
+		#{canWork},
+		#{mustWork}
+	)
+</insert>
+
+<!--memberNo로 projectNo 가져오기_Gantt  -->
+<select id = "getMemberNo" parameterType="string" resultType="MemberVO">
+	select projectNo from member where userno = (select userno from users where userid = #{userId}) 
+</select>
+
+<!-- login user가 속한 projectNoList 가져오기 -->
+<select id="getProjectNo" parameterType="string" resultType="int">
+	select projectNo from member where userno = (select userno from users where userid = #{userId}) 
+</select>
+</mapper>

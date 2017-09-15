@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scit.master.planbe.dao.ProjectMapper">
+
+<select id = "getMemberNo" parameterType="UsersVO" resultType="MemberVO">
+	SELECT memberno from member where userno=(select userno from users where userid = #{userId} and username = #{userName}) 
+</select>
+
+<select id="taskSerialize" resultType="TaskVO" parameterType="MemberVO">
+	SELECT * FROM task where memberno = #{memberNo}
+</select>
+
+<!-- 그룹네임 가져오기 -->
+<select id = "groupNameList" resultType = "UsersVO">
+	select distinct groupname from users order by groupname
+</select>
+
+<!-- 멤버 가져오기 -->
+<select id = "groupManagerList" resultType = "UsersVO" parameterType = "string">
+	select userId from users where groupname = #{groupName}
+</select>
+
+<!-- 매니저뺴고 멤버 다른방법은 없나??? -->
+<select id = "groupMemberList" resultType = "UsersVO" parameterType = "UsersVO">
+	select userId from users where groupname = #{groupName} and userId != #{userId}
+</select>
+
+<!-- Project_seq 얻어와랏 -->
+
+<select id = "getProjectSeq" resultType ="int">
+	select projectno from (select * from project order by projectno desc) where rownum = 1
+	
+</select>
+
+<!-- 프로젝트 생성 -->
+<insert id = "projectAdd" parameterType="ProjectVO">
+
+	insert into project values
+	(
+		project_seq.nextval,
+		#{userNo},
+		#{projectName},
+		#{projectContent},
+		#{projectStatus},
+		to_date(#{startDate},'yyyy/mm/dd'),
+		to_date(#{dueDate},'yyyy/mm/dd')
+	)
+</insert>
+
+<!-- 프로젝트 가져오기 (1개)  -->
+<select id = "getProject" parameterType="int" resultType="ProjectVO">
+	SELECT projectno, userno, projectname, projectcontent, projectstatus, to_char(startdate,'yyyy,mm,dd')as startDate,
+	to_char(duedate,'yyyy,mm,dd')as dueDate FROM PROJECT WHERE projectNo = #{projectNo}
+</select>
+</mapper>

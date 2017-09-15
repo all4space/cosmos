@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scit.master.planbe.dao.StaticMapper">
+
+<select id="getProjectList" resultType="ProjectVO">
+	SELECT * FROM PROJECT WHERE projectNo = 1
+
+</select>
+
+<!-- efficiency Time  -->
+<select id = "efficiency" resultType = "TaskVO">
+	SELECT projectno, SUM(totalTime)as totalTime, SUM(doneTime)as doneTime
+	FROM TASK WHERE projectNo IN (
+				<foreach collection="pnoList" item="list" index="index" open="(" close=")">
+			 #{list}
+		</foreach>
+		)
+</select>
+</mapper>
+
+
+

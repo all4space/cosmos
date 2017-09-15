@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scit.master.planbe.dao.WbsMapper">
+
+<!-- MemberList 가져오기  -->
+<select id="getMemberList" parameterType="String" resultType="MemberVO">
+   SELECT * FROM MEMBER WHERE USERNO = (SELECT USERNO FROM USERS WHERE USERID = #{userId})
+</select>
+
+<!-- ProjectInfo 가져오기  -->
+<select id="getProjectInfo" parameterType="int" resultType="ProjectVO">
+   SELECT * FROM PROJECT WHERE PROJECTNO = #{projectNo}
+</select>
+
+
+
+
+<!-- ProjectList 가져오기  -->
+<select id="getProjectList" parameterType="String" resultType="ProjectVO">
+   SELECT * FROM PROJECT WHERE USERNO = (SELECT USERNO FROM USERS WHERE USERID = #{userId})
+</select>
+
+
+
+<!-- TaskList 가져오기 -->
+<select id="getTaskList" parameterType="int" resultType="TaskVO">
+   SELECT * FROM TASK WHERE PROJECTNO = #{projectNo}
+</select>
+
+<!-- Task 가져오기 -->
+<select id="getTaskInfo" parameterType="TaskVO" resultType="TaskVO">
+   SELECT * FROM TASK WHERE PROJECTNO = #{projectNo} and TASKNO= #{taskNo}
+</select>
+   
+
+
+<!-- Task 수정하기 -->
+<update id="updateWbs" parameterType="TaskVO" >
+    UPDATE TASK 
+    SET TASKNAME = #{taskName}, 
+        TASKCONTENT = #{taskContent}, 
+        TASKPRIORITY = #{taskPriority}, 
+        TASKSTATUS = #{taskStatus}, 
+        STARTDATE = to_date(#{startDate}, 'yyyy-mm-dd'),
+        DUEDATE = to_date(#{dueDate}, 'yyyy-mm-dd'), 
+        TOTALTIME = #{totalTime}, 
+        DONETIME = #{doneTime}
+    WHERE TASKNO = #{taskNo}     
+</update>
+          
+<!-- Task 삭제하기  -->
+<delete id="deleteTask" parameterType="int" >
+   DELETE FROM TASK WHERE TASKNO = #{taskNo}  
+</delete>
+
+
+
+
+
+
+<!-- member 가져오기 -->
+<select id="getMember" parameterType="int" resultType="String">
+   SELECT USERNAME FROM USERS 
+   WHERE USERNO = (SELECT USERNO FROM MEMBER WHERE MEMBERNO = #{memberNo})
+</select>
+
+</mapper>
+
+
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scit.master.planbe.dao.UsersMapper">
+
+<!-- 회원 가입 -->
+<insert id="join" parameterType="UsersVO">
+    INSERT INTO USERS VALUES(user_seq.nextval, #{userId}, #{userName}, #{userPwd}, #{groupName}, #{authority})
+</insert>
+
+<!-- ID 중복 체크 -->
+<select id="idCheck" resultType="UsersVO" parameterType="String">
+	SELECT * FROM USERS WHERE userid = #{userId}
+</select>
+
+<!-- CTO 중복 체크 -->
+<select id="ctoCheck" resultType="UsersVO" parameterType="UsersVO">
+	SELECT * FROM USERS WHERE groupname = #{groupName} and authority = 'cto'
+</select>
+
+<!-- 로그인 -->
+<select id="login" resultType="UsersVO" parameterType="UsersVO">
+	SELECT * FROM USERS 
+	WHERE userid = #{userId} and userpwd = #{userPwd}
+</select>
+
+<!-- 회원 탈퇴 -->
+<delete id="delete" parameterType="UsersVO">
+	DELETE FROM USERS 
+	WHERE userid = #{userId} and userpwd = #{userPwd}
+</delete>
+
+<!-- getUserNo -->
+<select id="getUserNo" resultType="int" parameterType="string">
+	select userNo from users where userId = #{userId}
+</select>
+
+</mapper>
+
+
+

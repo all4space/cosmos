@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<typeAliases>
+		<typeAlias type="scit.master.planbe.VO.UsersVO" alias="UsersVO"></typeAlias>
+		<typeAlias type="scit.master.planbe.VO.MemberVO" alias="MemberVO"></typeAlias>
+		<typeAlias type="scit.master.planbe.VO.ProjectVO" alias="ProjectVO"></typeAlias>
+		<typeAlias type="scit.master.planbe.VO.TaskVO" alias="TaskVO"></typeAlias>
+		<typeAlias type="scit.master.planbe.VO.HistoryVO" alias="HistoryVO"></typeAlias>
+	</typeAliases>
+		<mappers>
+			<mapper resource="mapper/Usersmapper.xml" />
+			<mapper resource="mapper/Projectmapper.xml" />
+			<mapper resource="mapper/Taskmapper.xml" />
+			<mapper resource="mapper/Ganttmapper.xml" />
+			<mapper resource="mapper/Wbsmapper.xml" />
+			<mapper resource="mapper/Planmapper.xml" />
+			<mapper resource="mapper/Membermapper.xml" />
+			<mapper resource="mapper/Staticmapper.xml" />
+		</mappers>
+</configuration>

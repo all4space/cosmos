@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scit.master.planbe.dao.Taskmapper">
+<!-- 업무 생성하기 -->
+<insert id="Insert" parameterType="TaskVO">
+    insert into task values(
+   	 (select p.projectno from project p join users u on p.userno=u.userno)
+    ,(select m.memberno from member m join project p on m.projectno=p.projectno)
+    ,TASK_SEQ.nextval
+    ,#{taskName}
+    ,#{taskContent}
+    ,#{taskPriority}
+    ,#{taskStatus}
+    ,#{startDate}
+    ,#{dueDate}
+    ,#{totalTime}
+    ,#{doneTime})
+</insert>
+
+<!-- 업무 리스트 출력하기 -->
+<select id="getList" parameterType="map" resultType="TaskVO">
+
+	select * from task	
+	
+	   <if test="searchtype == 'title'">
+       WHERE taskname LIKE '%'||#{searchword}||'%'
+     </if>
+     <if test="searchtype == 'startdate'">
+       WHERE startdate LIKE '%'||#{searchword}||'%'
+     </if>
+     <if test="searchtype == 'deudate'">
+       WHERE duedate LIKE '%'||#{searchword}||'%'
+     </if>
+   	
+	order by taskno asc
+	
+</select>
+
+<!-- 업무 검색하기 -->
+<select id="findTask" parameterType="TaskVO" resultType="TaskVO">
+	select projectno,memberno,taskno,taskname,taskcontent,taskpriority,taskStatus,
+				to_char(startdate,'yyyy-mm-dd')startdate,to_char(duedate,'yyyy-mm-dd')duedate
+				,totaltime,donetime
+	 from task where taskno=#{taskNo}
+</select>
+
+<!-- 업무 수정하기 -->
+<update id="updateTask" parameterType="TaskVO">
+	update task
+	set taskname=#{taskName}
+	,taskcontent=#{taskContent}
+	,taskpriority=#{taskPriority}
+	,taskStatus=#{taskStatus}
+	,startdate=#{startDate}
+	,duedate=#{dueDate}
+	,totaltime=#{totalTime}
+	,donetime=#{doneTime}
+	where taskno=#{taskNo}
+</update>
+
+<!-- 업무 삭제하기 -->
+
+<delete id="deleteTask" parameterType="TaskVO">
+	delete from task where taskno=#{taskNo}
+</delete>
+
+<!-- 총 페이지 레코드 가져오기 -->
+
+<select id="getTotalCount" parameterType="map" resultType="int">
+	select count(*) from task
+		<choose>
+			<when test="searchtype=='title'">
+				where taskname like '%'||#{searchword}||'%'
+			</when>
+			<when test="searchtype=='startdate'">
+				where taskdate like '%'||#{searchword}||'%'
+			</when>
+			<when test="searchtype=='duedate'">
+				where duedate like '%'||#{searchword}||'%'
+			</when>
+		</choose>	
+</select>
+
+<!-- 엑셀 리스트 가져오기 -->
+
+
+	
+</mapper>
+
+
+
