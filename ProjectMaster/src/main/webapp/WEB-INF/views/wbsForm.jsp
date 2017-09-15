@@ -231,16 +231,12 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		  			var m_list = result.memberList;
 		  			
                     drawSimpleNodeChart(p_name, t_list, m_list);
-                    memberForKey(m_list); // 나중에 다시!!!
+                    memberForKey(p_name, t_list, m_list); 
 				} // success
 		});
 	}
       
-	/* 
-	$("#selectError").on('change', function() {
-	    alert( $(this).find(":selected").val() );
-	});
-	 */
+
 	 
 /* contains 메소드 추가 */
 	Array.prototype.contains = function(element) {
@@ -253,7 +249,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	}
 	 
 /* 키워드 리스트 불러오기 */
-    function memberForKey(m_list){
+    function memberForKey(p_name, t_list, m_list){
 	     /* 멤버리스트 중복 제거  */
 		 var array = [];
          array.push(m_list[0]);	
@@ -268,13 +264,13 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
          
 		 var data = "<option>-Select Keyword-</option>"
 		          + "<optgroup label='Priority'>"
-                  +	"<option value='high'>High</option>"
-                  + "<option value='normal'>Normal</option>" 
-		          + "<option value='low'>Low</option></optgroup>"
+                  +	"<option value='HIGH'>High</option>"
+                  + "<option value='NORMAL'>Normal</option>" 
+		          + "<option value='LOW'>Low</option></optgroup>"
 		          + "<optgroup label='Status'>"
-		          + "<option value=ing'>ING</option>"
-		          + "<option value='done'>DONE</option>"
-		          + "<option value='plan'>PLAN</option></optgroup>"
+		          + "<option value='ING'>ING</option>"
+		          + "<option value='DONE'>DONE</option>"
+		          + "<option value='PLAN'>PLAN</option></optgroup>"
 		          + "<optgroup label='Member'>";
 		          
          $(array).each(function(index, item) {
@@ -286,8 +282,38 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	     $('#selectError').empty();
 		 $('#selectError').append(data);
 		 $("#selectError").trigger("liszt:updated");
+		 
+		 keyAction(p_name, t_list, m_list);
+		 
     }
-	   
+		
+/* Key 이벤트 : key 에 해당하는 Task로만 트리 구조화  */
+    function keyAction(p_name, t_list, m_list){
+    
+    	$("#selectError").on('change', function() {
+    		 alert( this.value );
+    		 
+    		 var key = this.value;
+             var keyTask = []; 
+             var keyMember = [];
+             
+             for(var i=0; i<t_list.length; i++){
+            	 
+            	 if(t_list[i].taskPriority == key){
+            		 keyTask.push(t_list[i]); 
+            		 keyMember.push(m_list[i]);
+            	 } else if(t_list[i].taskStatus == key){
+            		 keyTask.push(t_list[i]);
+            		 keyMember.push(m_list[i]);
+            	 } else if(m_list[i] == key){
+            		 keyMember.push(m_list[i]);
+            		 keyTask.push(t_list[i]);
+            	 }
+             }//for
+             drawSimpleNodeChart(p_name, keyTask, keyMember);
+    	});
+     }	   
+             
 
 /* 키워드별 TaskList 가져오기 */
 /*    var select = document.getElementById("select_id");
