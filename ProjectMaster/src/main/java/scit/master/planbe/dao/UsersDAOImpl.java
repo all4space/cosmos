@@ -59,6 +59,22 @@ public int getUserNo(String userId) {
 		
 }
 
+public ArrayList<UsersVO> getMemberList(int projectNo) {
+	UsersMapper mapper = Sqlsession.getMapper(UsersMapper.class);
+	return mapper.getMemberList(projectNo);
+
+}
+@Override
+public ArrayList<UsersVO> getUserVo(String groupName) {
+	UsersMapper mapper = Sqlsession.getMapper(UsersMapper.class);
+	return mapper.getUserVo(groupName);
+}
+@Override
+public UsersVO getUserInfo(int userNo) {
+	UsersMapper mapper = Sqlsession.getMapper(UsersMapper.class);
+	return mapper.getUserInfo(userNo);
+	}
+
 }
 
 

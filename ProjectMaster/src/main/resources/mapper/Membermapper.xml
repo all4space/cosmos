@@ -41,4 +41,10 @@
 <select id="getProjectNo" parameterType="string" resultType="int">
 	select projectNo from member where userno = (select userno from users where userid = #{userId}) 
 </select>
+
+<!-- 멤버 프젝넘버 -->
+<select id = "getMemberList" resultType = "MemberVO" parameterType = "int">
+	select * from member where projectno=#{projectNo}
+</select>
+
 </mapper>

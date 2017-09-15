@@ -36,6 +36,14 @@
 <select id="getUserNo" resultType="int" parameterType="string">
 	select userNo from users where userId = #{userId}
 </select>
+<!-- getUserVo -->
+<select id = "getUserVo" resultType = "UsersVO" parameterType ="string">
+	select * from users where groupname = #{groupName}
+</select>
+<!-- getUserInfo -->
+<select id = "getUserInfo" resultType = "UsersVO" parameterType = "int">
+	select * from users where userno = #{userNo}
+</select>
 
 </mapper>
 

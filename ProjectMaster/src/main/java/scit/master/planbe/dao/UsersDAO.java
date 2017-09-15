@@ -1,5 +1,7 @@
 package scit.master.planbe.dao;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpSession;
 
 import scit.master.planbe.VO.UsersVO;
@@ -11,4 +13,6 @@ public interface UsersDAO {
 	public UsersVO login(UsersVO vo); // 로그인
 	public int delete(UsersVO vo); // 회원 탈퇴
 	public int getUserNo(String userId);
+	public ArrayList<UsersVO> getUserVo(String groupName);
+	public UsersVO getUserInfo(int userNo);
 }

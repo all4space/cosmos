@@ -42,7 +42,7 @@
 	<!-- end: Favicon -->
 	<script>
 	
-/* 
+
 	function groupSelect(obj) //그룹이름에 따른 멤버 리스트 select ver
 	{
  
@@ -77,51 +77,19 @@
 			alert("에러뭐든");
 		}
 	})
-} */
+}
 
-/* //그룹 멤버리스트
- */
- function managerSelect(manager)
- {
-	alert(manager.value);
-	$.ajax
-	({
-		url :"/planbe/project/groupMemberList",
-		type: "post",
-		data:{"userId":manager.value},
-		dataType:"json",
-		success: function(result)
-		{
-			$("#groupMemberList").empty();
-			
-			$(result).each(function(index, item){
-			var addRow = '<option>'
-						+ item.userId
-						+ '</option>';
-						
-			$("#groupMemberList").append(addRow);
-			
-			})
-			$("#groupMemberList").trigger("liszt:updated");
-		},
-		
-		error : function()
-		{
-			alert("응 안되");
-		}
-		
-		
-	})
- }
- /*
+//그룹 멤버리스트
 function managerSelect(manager) //그룹이름에 따른 멤버 리스트 select ver
 {
-	alert("록담이!!!" + manager.value);
+	alert("groupMemberList function In" + manager.value);
+	alert()
+	
 	$.ajax
 	({
 		url: "/planbe/project/groupMemberList",
 		type: "post",
-		data: {"userId":manager.value},
+		data: {"groupName":document.getElementById("groupNameList").value, "userId":manager.value},
 		dataType: "json",
 		success: function(result)
 		{
@@ -142,10 +110,10 @@ function managerSelect(manager) //그룹이름에 따른 멤버 리스트 select
 		},
 		error : function()
 		{
-		alert("록담아 제발!!");
+		alert("에러뭐든");
 	}
 })
-} */
+}
 
  
 </script>
@@ -164,7 +132,7 @@ function managerSelect(manager) //그룹이름에 따른 멤버 리스트 select
 		
 <!-- Side Menu -->
 	<div>
-    <%@include file="sideMenu.jsp"%>
+     <%@include file="sideMenu.jsp"%>
     </div>		
 			<noscript>
 				<div class="alert alert-block span10">
@@ -200,12 +168,12 @@ function managerSelect(manager) //그룹이름에 따른 멤버 리스트 select
 						</div>
 					</div>
 					<div class="box-content">
-						<form action = "/planbe/project/projectAdd" method = "post" class="form-horizontal">
+						<form action = "/planbe/project/projectUpdate" method = "post" class="form-horizontal">
 						  <fieldset>
 							<div class="control-group">
 							  <label class="control-label" for="typeahead">Project Name </label>
 							  <div class="controls">
-								<input type="text" class="span6 typeahead" id="projectName" name ="projectName"  data-provide="typeahead" data-items="4" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'>
+								<input value = "${projectList.projectName}"type="text" class="span6 typeahead" id="projectName" name ="projectName"  data-provide="typeahead" data-items="4" data-source='["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Dakota","North Carolina","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]'>
 								<!-- 자동완성 데이터 넣을거 있는지. 추후 사용가능 -->
 								
 								<p class="help-block">Start typing to activate auto complete!</p>
@@ -214,21 +182,21 @@ function managerSelect(manager) //그룹이름에 따른 멤버 리스트 select
 							<div class="control-group">
 							  <label class="control-label" for="date01">Start Date</label>
 							  <div class="controls">
-								<input type="text" class="input-xlarge datepicker" id="startDate" name = "startDate" value="">
+								<input type="text" value = "${projectList.startDate}" class="input-xlarge datepicker" id="startDate" name = "startDate" value="">
 							  </div>
 							</div> <!-- START DATE 년/월/일 설정하는법 -->
 							
 							<div class="control-group">
-							  <label class="control-label" for="date01">Start Date</label>
+							  <label class="control-label" for="date01">Due Date</label>
 							  <div class="controls">	
-								<input type="text" class="input-xlarge datepicker" id="dueDate" name = "dueDate" value="">
+								<input type="text"  value = "${projectList.dueDate}" class="input-xlarge datepicker" id="dueDate" name = "dueDate" value="">
 							  </div>
 							</div> <!-- START DATE 년/월/일 설정하는법 -->
 							
 							 <div class="control-group hidden-phone">
 							  <label class="control-label" for="textarea1">Project Content</label>
 							  <div class="controls">
-								<textarea class="cleditor" id="textarea1" name = "projectContent" rows="3"></textarea>
+								<textarea value = "${projectList.projectContent}"class="cleditor" id="textarea1" name = "projectContent" rows="3"></textarea>
 							  </div>
 							</div> <!-- 컨텐츠 - > 글꼴 설정 필요한지 -->
 							
@@ -242,45 +210,9 @@ function managerSelect(manager) //그룹이름에 따른 멤버 리스트 select
 								  </select>
 								</div>
 							  </div>	
-							  
-							  
-							<%-- <div class="control-group">
-								<label class="control-label" for="groupNameList">Group Select</label>
-								<div class="controls">
-<!--리스트  -->								  
-								  <select id="groupNameList" name = "groupName" class="groupNameList" data-rel="chosen" onchange="javascript:groupSelect(this);">
-								  <c:forEach items="${groupNameList}" var="groupNameList" >
-									<option>${groupNameList.groupName}</option>
-								  </c:forEach>
-								  </select>
-								</div>
-							  </div> --%>
-							  
-							  <div class="control-group">
-								<label class="control-label">Manager Select</label>
-								<div class="controls">
-<!--리스트  -->								  
-								  <select id="groupManagerList" name = "managerId" data-rel="chosen" onchange="javascrpipt:managerSelect(this)">
-								  	<option>Manager Select</option>
-								  	<c:forEach items="${groupManagerList}" var="groupManagerList" >
-									<option>${groupManagerList.userId}</option>
-								  </c:forEach>
-								  </select>
-								</div>
-							  </div>
-							  
-							   <div class="control-group">
-								<label class="control-label">Member Select</label>
-								<div class="controls">
-<!--리스트  -->								  
-								  <select id="groupMemberList" name = "memberList" multiple data-rel="chosen">
-								  </select>
-								</div>
-							  </div>
-<!--멤버  -->						  
-						  
 							<div class="form-actions">
-							  <button type="submit" class="btn btn-primary">CONFIRM</button>
+							<input type = "hidden" value = "${projectList.projectNo}" name = "projectNo">
+							  <button type="submit" class="btn btn-primary">MODIFY</button>
 							  <button type="reset" class="btn">Cancel</button>
 							</div>
 							

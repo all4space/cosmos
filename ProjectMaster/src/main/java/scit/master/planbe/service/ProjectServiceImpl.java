@@ -34,14 +34,13 @@ public class ProjectServiceImpl implements ProjectService{
 	}
 
 	@Override
-	public boolean projectDelete(UsersVO vo) {
-		// TODO Auto-generated method stub
-		return false;
+	public int projectDelete(int projectNo) {
+		return dao.projectDelete(projectNo);
 	}
 
 	@Override
-	public ProjectVO getProject(int projectNo) {
-		return dao.getProject(projectNo);
+	public ArrayList<ProjectVO> getProjectList(int userNo) {
+		return dao.getProjectList(userNo);
 	}
 
 	public ArrayList<UsersVO> groupNameList() {
@@ -61,4 +60,22 @@ public class ProjectServiceImpl implements ProjectService{
 	public int getProjectSeq() {
 		return dao.getProjectSeq();
 	}
+	
+	public ProjectVO getProjectInfo(int projectNo) {
+		return dao.getProjectInfo(projectNo);
+	}
+
+	@Override
+	public ProjectVO getProject(int projectNo) {
+		return null;
+	}
+
+	public String getGroupName(String userId) {
+		return dao.getGroupName(userId);
+	}
+	@Override
+	public void projectUpdate(ProjectVO projectList) {
+		dao.projectUpdate(projectList);
+	}
+
 }

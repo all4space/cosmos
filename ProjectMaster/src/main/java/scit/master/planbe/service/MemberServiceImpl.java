@@ -37,4 +37,8 @@ public class MemberServiceImpl implements MemberService{
 	public ArrayList<Integer> getProjectNo(String userId) {
 		return dao.getProjectNo(userId);
 	}
+
+	public ArrayList<MemberVO> getMemberList(int projectNo) {
+		return dao.getMemberList(projectNo);
+	}
 }

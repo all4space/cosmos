@@ -21,7 +21,7 @@
 				<div class="nav-collapse sidebar-nav">
 					<ul class="nav nav-tabs nav-stacked main-menu">
 <!-- Main 메뉴 -->		<li><a href="/planbe/"><i class="icon-bar-chart"></i><span class="hidden-tablet"> Main</span></a></li>	
-<!-- Project 메뉴 -->   <li><a href="/planbe/project/projectForm"><i class="icon-edit"></i><span class="hidden-tablet"> Project</span></a></li>
+<!-- Project 메뉴 -->   <li><a href="/planbe/project/projectList"><i class="icon-edit"></i><span class="hidden-tablet"> Project</span></a></li>
 <!-- Task 메뉴 -->	    <li><a href="/planbe/task/taskForm"><i class="icon-tasks"></i><span class="hidden-tablet"> Task</span></a></li>
 <!-- Gantt 메뉴 -->		<li><a href="/planbe/gantt/ganttForm"><i class="icon-bar-chart"></i><span class="hidden-tablet"> Gantt</span></a></li>
 <!-- WBS 메뉴 -->		<li><a href="/planbe/wbs/wbsForm"><i class="icon-bar-chart"></i><span class="hidden-tablet"> WBS</span></a></li>	

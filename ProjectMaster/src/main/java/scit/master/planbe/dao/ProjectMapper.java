@@ -11,7 +11,7 @@ public interface ProjectMapper {
 	
 	public int projectAdd(ProjectVO projectVo);
 	public int projectModify(UsersVO vo);
-	public int projectDelete(UsersVO vo);
+	public int projectDelete(int projectNo);
 	public ProjectVO getProject(int projectNo);
 	
 	
@@ -28,4 +28,8 @@ public interface ProjectMapper {
 	public ArrayList<UsersVO> groupMemberList(UsersVO uvo);
 	public ArrayList<UsersVO> groupManagerList(String groupName);
 	public int getProjectSeq();
+	public ArrayList<ProjectVO> getProjectList(int userNo);
+	public ProjectVO getProjectInfo(int projectNo);
+	public String getGroupName(String userId);
+	public void projectUpdate(ProjectVO projectList);
 }

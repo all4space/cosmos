@@ -69,6 +69,20 @@ public class UsersServiceImpl implements UsersService{
 		
 	}
 
+	public ArrayList<UsersVO> getMemberList(int projectNo) {
+		return dao.getMemberList(projectNo);
+	}
+	@Override
+	public ArrayList<UsersVO> getUserVo(String groupName) {
+		return dao.getUserVo(groupName);
+	}
+	@Override
+	public UsersVO getUserInfo(int userNo) {
+		
+		return dao.getUserInfo(userNo);
+		
+	}
+
 	
 }
 

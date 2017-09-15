@@ -84,7 +84,7 @@
 			<div class="row-fluid sortable">		
 				<div class="box span12">
 					<div class="box-header" data-original-title>
-						<h2><i class="halflings-icon white user"></i><span class="break"></span>Members</h2>
+						<h2><i class="halflings-icon white user"></i><span class="break"></span>GroupName : ${userVo[0].groupName}</h2>
 						<div class="box-icon">
 							<a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a>
 							<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
@@ -95,14 +95,33 @@
 						<table class="table table-striped table-bordered bootstrap-datatable datatable">
 						  <thead>
 							  <tr>
-								  <th>Username</th>
-								  <th>Date registered</th>
-								  <th>Role</th>
-								  <th>Status</th>
+								  <th>UserId</th>
+								  <th>UserName</th>
+								  <th>Authority</th>
 								  <th>Actions</th>
 							  </tr>
-						  </thead>   
+						  </thead>
 						  <tbody>
+						  <c:forEach items = "${userVo}" var = "vo">
+						  <tr>
+							  <td>${vo.userId}</td>
+							  <td>${vo.userName}</td>
+							  <td>${vo.authority}</td>
+						  <td class="center">
+									<a class="btn btn-success" href="/planbe/users/userInfoForm?userNo=${vo.userNo}">
+										<i class="halflings-icon white zoom-in"></i>  
+									</a>
+									<a class="btn btn-info" href="#">
+										<i class="halflings-icon white edit"></i>  
+									</a>
+									<a class="btn btn-danger" href="/planbe/member/delete">
+										<i class="halflings-icon white trash"></i> 
+									</a>
+							</td>
+						  </tr>
+						  </c:forEach>
+						  </tbody>   
+						 <!--  <tbody>
 							<tr>
 								<td>Dennis Ji</td>
 								<td class="center">2012/01/01</td>
@@ -163,7 +182,7 @@
 							</tr>
 							<tr>
 								<td>Dennis Ji</td>
-								<td class="center">2012/01/01</td>
+								<td class="center">11111</td>
 								<td class="center">Member</td>
 								<td class="center">
 									<span class="label label-success">Active</span>
@@ -730,7 +749,9 @@
 									</a>
 								</td>
 							</tr>
-						  </tbody>
+						  </tbody> -->
+						  
+						  
 					  </table>            
 					</div>
 				</div><!--/span-->

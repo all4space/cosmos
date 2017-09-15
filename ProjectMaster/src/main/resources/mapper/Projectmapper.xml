@@ -55,4 +55,26 @@
 	SELECT projectno, userno, projectname, projectcontent, projectstatus, to_char(startdate,'yyyy,mm,dd')as startDate,
 	to_char(duedate,'yyyy,mm,dd')as dueDate FROM PROJECT WHERE projectNo = #{projectNo}
 </select>
+<select id = "getProjectList" resultType = "ProjectVO" parameterType="int">
+	select p.projectno, p.projectname, p.projectcontent, p.userno, p.startDate, p.dueDate, p.projectStatus from project p, member m where m.projectno = p.projectno and m.userno = #{userno}
+</select>
+<!-- projectMODIFY -->
+<update id = "projectUpdate" parameterType = "ProjectVO">
+	update project set projectName = #{projectName}, projectContent = #{projectContent}, projectstatus = #{projectStatus},
+	startDate = to_date(#{startDate}, 'yyyy-mm-dd'), duedate = to_date(#{dueDate}, 'yyyy-mm-dd') where projectNo = #{projectNo}
+</update>
+
+<!-- ProejctINfo -->
+<select id = "getProjectInfo" resultType = "ProjectVO" parameterType = "int">
+	select * from project where projectno = #{projectNo}
+</select>
+<!-- 그룹네임 불러오기 로그인 아이디로-->
+<select id = "getGroupName" parameterType = "String" resultType = "String">
+	select groupname from users where userid = #{userId}
+</select>
+
+<!-- 프로젝트 삭제 -->
+<delete id = "projectDelete" parameterType = "int">
+	delete from project where projectno = #{projectNo}
+</delete>
 </mapper>
