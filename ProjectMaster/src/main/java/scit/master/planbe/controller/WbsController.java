@@ -30,7 +30,6 @@ public class WbsController {
 	// Gantt와 연동 : Gantt 페이지에서 클릭한 프로젝트의 WBS 트리를 보여줌  
 	@RequestMapping(value = "fromGantt", method = RequestMethod.GET)
 	public String fromGantt(Model model, int projectNo) {
-		
 		model.addAttribute("fromG", projectNo);
 		return "wbsForm";
 	}
@@ -79,47 +78,21 @@ public class WbsController {
 	    
 	    return map;
 	}
-	
 	    
-	// WBS Update : TaskInfo 수정 
-	@RequestMapping(value = "updateWbs")
+	// WBS Update 1 : TaskInfo 수정 
+	@RequestMapping(value = "updateTask")
 	@ResponseBody
-	public boolean updateWbs(TaskVO vo) {
-		System.out.println("프넘" + vo.getProjectNo());
-		System.out.println("업무" + vo.toString());
-       
-		if(service.updateWbs(vo)) return true; 
+	public boolean updateTask(TaskVO vo) {
+		if(service.updateTask(vo)) return true; 
 		return false;
 	}	
 	    
-	// Task 삭제 : Task Controller 로 넘길 예정. Test용  
+	// WBS Update 2:  Task 삭제   
 	@RequestMapping(value = "deleteTask", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean deleteTask(int taskNo) {
-		System.out.println("테스크넘" + taskNo);
 		if(service.deleteTask(taskNo)) return true;
 		return false;
-	}
-	
-/*		
-	// memberList 불러오기 
-	@RequestMapping(value = "getMemberList", method = RequestMethod.POST)
-	@ResponseBody
-	public ArrayList<String> getMemberList(int projectNo) {
-		System.out.println("프넘" + projectNo);
-		ArrayList<String> memberList = service.getMemberList(projectNo);
-		return memberList;
-	}
-		*/
-	
-	// keyList 불러오기 
-	@RequestMapping(value = "doneList", method = RequestMethod.GET)
-	@ResponseBody
-	public ArrayList<TaskVO> doneList(int projectNo, int key) {
-		System.out.println("프넘" + key);
-		ArrayList<TaskVO> list = service.doneList(projectNo, key);
-		return list;
-		
 	}
 	
 }

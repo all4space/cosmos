@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import scit.master.planbe.VO.MemberVO;
+import scit.master.planbe.VO.ProjectVO;
 
 
 @Repository
@@ -29,9 +30,15 @@ public class MemberDAOImpl implements MemberDAO {
 	}  
 	
 	@Override
-	public MemberVO getMemberNo(String userId) {
+	public ArrayList<MemberVO> getMyProject(String userId) {
 		MemberMapper mapper = Sqlsession.getMapper(MemberMapper.class);
-		return mapper.getMemberNo(userId);
+		return mapper.getMyProject(userId);
+	}  
+	
+	@Override
+	public ArrayList<ProjectVO> getProjectInfo(ArrayList<Integer> projectNo) {
+		StaticMapper mapper = Sqlsession.getMapper(StaticMapper.class);
+		return mapper.getProjectList(projectNo);
 	}
 
 	@Override
@@ -39,9 +46,4 @@ public class MemberDAOImpl implements MemberDAO {
 		MemberMapper mapper = Sqlsession.getMapper(MemberMapper.class);
 		return mapper.getProjectNo(userId);
 	}
-
-	public ArrayList<MemberVO> getMemberList(int projectNo) {
-		MemberMapper mapper = Sqlsession.getMapper(MemberMapper.class);
-		return mapper.getMemberList(projectNo);
-	}  
 }

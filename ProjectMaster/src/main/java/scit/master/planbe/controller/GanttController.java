@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,8 +24,13 @@ public class GanttController {
 	
 	//1 Gantt 페이지 불러오기 
 	@RequestMapping(value = "ganttForm", method = RequestMethod.GET)
-	public String ganttForm() {
-		return "redirect:/member/getMemberNo";
+	public String ganttForm(String projectNo, Model model) {
+		String address = "redirect:/member/getProjectList";
+			if(projectNo != null){
+				address = "ganttForm";
+				model.addAttribute("projectNo", projectNo);
+			}
+		return address;
 	}
 	
 	//2 Gantt 불러오기

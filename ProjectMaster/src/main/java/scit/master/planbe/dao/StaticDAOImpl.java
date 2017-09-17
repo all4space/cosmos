@@ -7,8 +7,10 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import scit.master.planbe.VO.MemberVO;
 import scit.master.planbe.VO.ProjectVO;
 import scit.master.planbe.VO.TaskVO;
+import scit.master.planbe.VO.UsersVO;
 
 
 @Repository
@@ -20,7 +22,8 @@ public class StaticDAOImpl implements StaticDAO {
 	@Override
 	public ArrayList<ProjectVO> getProjectList(ArrayList<Integer> pnoList) {
 		StaticMapper mapper = Sqlsession.getMapper(StaticMapper.class);
-		System.out.println(pnoList);
+		System.out.println(pnoList+"dao");
+		System.out.println(mapper.getProjectList(pnoList));
 		return mapper.getProjectList(pnoList);  
 	}
 
@@ -28,7 +31,26 @@ public class StaticDAOImpl implements StaticDAO {
 	public ArrayList<TaskVO> efficiency(ArrayList<Integer> pnoList) {
 		StaticMapper mapper = Sqlsession.getMapper(StaticMapper.class);
 		return mapper.efficiency(pnoList);
-	}  
+	}
+
+	@Override
+	public ArrayList<TaskVO> progress(ProjectVO vo) {
+		StaticMapper mapper = Sqlsession.getMapper(StaticMapper.class);
+		return mapper.progress(vo);
+	}
+
+	@Override
+	public ArrayList<MemberVO> usernoGetMember(ArrayList<Integer> memberNoList) { //UsersVO 반환 userno가지고
+		StaticMapper mapper = Sqlsession.getMapper(StaticMapper.class);
+		return mapper.usernoGetMember(memberNoList);
+	}
+	
+	@Override
+	public ArrayList<UsersVO> taskOfusersName(ArrayList<MemberVO> usersNoList) {
+		StaticMapper mapper = Sqlsession.getMapper(StaticMapper.class);
+		return mapper.taskOfusersName(usersNoList);
+	}
+
 	
 	
 	

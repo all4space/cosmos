@@ -33,18 +33,12 @@
 </insert>
 
 <!--memberNo로 projectNo 가져오기_Gantt  -->
-<select id = "getMemberNo" parameterType="string" resultType="MemberVO">
-	select projectNo from member where userno = (select userno from users where userid = #{userId}) 
+<select id = "getMyProject" parameterType="string" resultType="MemberVO">
+	select projectNo,projectAuthority from member where userno = (select userno from users where userid = #{userId}) 
 </select>
 
 <!-- login user가 속한 projectNoList 가져오기 -->
 <select id="getProjectNo" parameterType="string" resultType="int">
 	select projectNo from member where userno = (select userno from users where userid = #{userId}) 
 </select>
-
-<!-- 멤버 프젝넘버 -->
-<select id = "getMemberList" resultType = "MemberVO" parameterType = "int">
-	select * from member where projectno=#{projectNo}
-</select>
-
 </mapper>

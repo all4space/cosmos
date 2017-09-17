@@ -10,9 +10,7 @@ public interface MemberMapper {
 
 	public void MemberAdd(MemberVO memberVo);
 
-	public MemberVO getMemberNo(String userId);
+	public ArrayList<MemberVO> getMyProject(String userId);
 	
 	public ArrayList<Integer> getProjectNo(String userId);
-
-	public ArrayList<MemberVO> getMemberList(int projectNo);
 }

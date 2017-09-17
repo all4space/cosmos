@@ -6,19 +6,47 @@
 <mapper namespace="scit.master.planbe.dao.StaticMapper">
 
 <select id="getProjectList" resultType="ProjectVO">
-	SELECT * FROM PROJECT WHERE projectNo = 1
-
+	SELECT projectNo, userNo, projectName, projectContent, projectStatus, to_char(startdate,'yyyy/mm/dd')as startDate,
+	to_char(duedate,'yyyy/mm/dd')as dueDate FROM PROJECT WHERE projectNo IN 
+		<foreach collection="list" item="list" index="index" open="(" separator="," close=")">
+			 #{list}
+		</foreach>
 </select>
 
 <!-- efficiency Time  -->
 <select id = "efficiency" resultType = "TaskVO">
 	SELECT projectno, SUM(totalTime)as totalTime, SUM(doneTime)as doneTime
-	FROM TASK WHERE projectNo IN (
-				<foreach collection="pnoList" item="list" index="index" open="(" close=")">
+	FROM TASK WHERE projectNo IN 
+				<foreach collection="list" item="list" index="index" open="(" separator= "," close=")">
 			 #{list}
+		</foreach>
+	GROUP BY projectNo,projectNo
+</select>
+
+<!-- progress  -->
+<select id = "progress" parameterType="ProjectVO"  resultType="TaskVO">
+	SELECT * FROM TASK WHERE projectNo = ${projectNo}
+</select>
+
+<!-- usersNo  -->
+<select id = "usernoGetMember" resultType="MemberVO">
+	SELECT memberNo, userNo
+	FROM MEMBER
+	WHERE memberNo IN (
+		<foreach collection="list" item="list" index="index" separator=",">
+			#{list}
 		</foreach>
 		)
 </select>
+
+<select id = "taskOfusersName" resultType="UsersVO">
+	SELECT userno, userName FROM USERS 
+	WHERE userNo IN
+		<foreach collection="list" item="list" index="index" open="(" separator="," close=")">
+			${list.userNo}
+		</foreach>
+</select>
+
 </mapper>
 
 

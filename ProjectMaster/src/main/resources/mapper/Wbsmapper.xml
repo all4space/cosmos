@@ -15,30 +15,19 @@
    SELECT * FROM PROJECT WHERE PROJECTNO = #{projectNo}
 </select>
 
-
-
-
-<!-- ProjectList 가져오기  -->
-<select id="getProjectList" parameterType="String" resultType="ProjectVO">
-   SELECT * FROM PROJECT WHERE USERNO = (SELECT USERNO FROM USERS WHERE USERID = #{userId})
-</select>
-
-
-
 <!-- TaskList 가져오기 -->
 <select id="getTaskList" parameterType="int" resultType="TaskVO">
    SELECT * FROM TASK WHERE PROJECTNO = #{projectNo}
 </select>
 
-<!-- Task 가져오기 -->
-<select id="getTaskInfo" parameterType="TaskVO" resultType="TaskVO">
-   SELECT * FROM TASK WHERE PROJECTNO = #{projectNo} and TASKNO= #{taskNo}
+<!-- member 가져오기 -->
+<select id="getMember" parameterType="int" resultType="String">
+   SELECT USERNAME FROM USERS 
+   WHERE USERNO = (SELECT USERNO FROM MEMBER WHERE MEMBERNO = #{memberNo})
 </select>
-   
-
 
 <!-- Task 수정하기 -->
-<update id="updateWbs" parameterType="TaskVO" >
+<update id="updateTask" parameterType="TaskVO" >
     UPDATE TASK 
     SET TASKNAME = #{taskName}, 
         TASKCONTENT = #{taskContent}, 
@@ -50,22 +39,11 @@
         DONETIME = #{doneTime}
     WHERE TASKNO = #{taskNo}     
 </update>
-          
+
 <!-- Task 삭제하기  -->
 <delete id="deleteTask" parameterType="int" >
    DELETE FROM TASK WHERE TASKNO = #{taskNo}  
 </delete>
-
-
-
-
-
-
-<!-- member 가져오기 -->
-<select id="getMember" parameterType="int" resultType="String">
-   SELECT USERNAME FROM USERS 
-   WHERE USERNO = (SELECT USERNO FROM MEMBER WHERE MEMBERNO = #{memberNo})
-</select>
 
 </mapper>
 

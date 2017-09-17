@@ -2,7 +2,12 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
 <!DOCTYPE html>
+
+
+
 <html>
+
+
 <head>
 	
 	<!-- start: Meta -->
@@ -40,6 +45,7 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>		
 </head>
 
+
 <script>
 
 /* Gantt와 연동 */
@@ -57,6 +63,16 @@
 google.charts.load('current', {packages:['wordtree']});
 google.charts.setOnLoadCallback(drawSimpleNodeChart);
 
+<!-- This adds the proper namespace on the generated SVG -->
+function AddNamespace(){
+  var svg = jQuery('#wordtree_explicit svg');
+  svg.attr("xmlns", "http://www.w3.org/2000/svg");
+  svg.css('overflow','visible');
+}
+
+
+
+ var tree_div; 
  var wordtree;
  var nodeListData;
  var taskList;
@@ -174,28 +190,37 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	    }
     };
     
-  
-  wordtree = new google.visualization.WordTree(document.getElementById('wordtree_explicit'));
-  wordtree.draw(nodeListData, options);  // draw 
-  
-  //  $("text[text-anchor='start']").attr("text-anchor", "zero");
-  /* 
-	$("text[text-anchor='start']").on('click', function(){
-		alert("click!!!");
-		var xpos = $("text").attr('fill');
-		alert(xpos);
-		
-		
-		//getAllInfo()
-	});
-   */
+ 
+    tree_div = document.getElementById('wordtree_explicit');
+    wordtree = new google.visualization.WordTree(tree_div);
+
+    google.visualization.events.addListener(wordtree, 'ready', AddNamespace);
+    
+    
+	wordtree.draw(nodeListData, options);  // draw 
+
    
-  google.visualization.events.addListener(wordtree, 'select', getWbsInfo);
-  // google.visualization.events.addListener(wordtree, 'select', getSubInfo); // addListener_select
-  google.visualization.events.addListener(wordtree, 'ready', deleteWbs); // addListener_ready 
-   
+    // tree_div.innerHTML = '<img src="' + wordtree.getImageURI() + '">';
+    
+    // google.visualization.events.addListener(wordtree, 'ready', downloadWbs);   
+	google.visualization.events.addListener(wordtree, 'select', getWbsInfo);
+	google.visualization.events.addListener(wordtree, 'ready', deleteWbs);
 } 
 /* end : WBS 트리 생성 */
+
+/*=========================================================================================================================*/
+
+<!-- Convert the SVG to PDF and download it -->
+var click="return xepOnline.Formatter.Format('JSFiddle', {render:'download', srctype:'svg'})";
+$('#bbbttt').append('<button onclick="'+ click +'">PDF</button>');
+<!-- Convert the SVG to PNG@120dpi and open it -->
+click="return xepOnline.Formatter.Format('JSFiddle', {render:'newwin', mimeType:'image/png', resolution:'120', srctype:'svg'})";
+$('#bbbttt').append('<button onclick="'+ click +'">PNG @120dpi</button>');
+<!-- Convert the SVG to JPG@300dpi and open it -->
+click="return xepOnline.Formatter.Format('JSFiddle', {render:'newwin', mimeType:'image/jpg', resolution:'300', srctype:'svg'})";
+$('#bbbttt').append('<button onclick="'+ click +'">JPG @300dpi</button>');
+
+
 
 
 /* WBS 트리 삭제하기 */	
@@ -232,11 +257,65 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		  			
                     drawSimpleNodeChart(p_name, t_list, m_list);
                     memberForKey(p_name, t_list, m_list); 
+                    
+                    whoIsBest(t_list);
 				} // success
 		});
 	}
       
+/* 랭킹 테스트 */
+    function whoIsBest(t_list){
+	   
+	   var NoArray = []; 
 
+       for(var i=0; i<t_list.length; i++){
+    	   if(!NoArray.contains(t_list[i].memberNo)){
+              NoArray.push(t_list[i].memberNo);
+           }
+       }
+       alert(NoArray); // 3,5,2 	    
+       
+       var objArray = [];
+       for(var i=0; i < NoArray.length; i++){
+	        var obj = {
+		         m_no : NoArray[i], 	   
+		         rate : 0,
+		         count : 0
+	        }
+            alert(obj.m_no); //
+            objArray.push(obj);
+	   }
+
+       alert(objArray[0].m_no); // 3
+       
+       for(var i=0; i<t_list.length; i++){
+    	   var doneTime = t_list[i].doneTime.toFixed(2);
+      	   var totalTime = t_list[i].totalTime.toFixed(2); 
+      	   var rate = (doneTime/totalTime).toFixed(2)*100; 
+           
+      	   for(var j=0; j<objArray.length; j++){
+      		   if(t_list[i].memberNo == objArray[j].m_no){
+      			   objArray[j].rate += rate;
+      			   objArray[j].count += 1;
+      		   }
+      	   }
+       }
+      			   
+       alert(objArray[0].m_no); // 3
+       alert(objArray[0].rate); // 300
+       alert(objArray[0].count); // 5
+       
+       var avgArray = [];
+       for(var i=0; i<objArray.length; i++){
+    	   avgArray.push(objArray[i].rate/objArray[i].count);
+       }
+       alert(avgArray[0]); // 60
+       
+          
+	   
+    }//function 
+	
+	
 	 
 /* contains 메소드 추가 */
 	Array.prototype.contains = function(element) {
@@ -262,7 +341,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
          }
 		// alert(array);        
          
-		 var data = "<option value='orgin'>-Select Keyword-</option>"
+		 var data = "<option value='origin'>-Select Keyword-</option>"
 		          + "<optgroup label='Priority'>"
                   +	"<option value='HIGH'>High</option>"
                   + "<option value='NORMAL'>Normal</option>" 
@@ -301,39 +380,46 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
     	$("#selectError").on('change', function() {
     		 
     		 var key = this.value;
-             var keyTask = []; 
-             var keyMember = [];
+	         var keyTask = []; 
+	         var keyMember = [];
              
-             alert(key);
+	         alert(key);
+             
              /* 전체 Task 보기(original) */
              if("origin" == key){
             	 alert("오리진"); // 아니 왜 안 들어와...
             	 drawSimpleNodeChart(p_name, t_list, m_list); 
-             }
-             
-             /* 키워드별 Task 보기 */
-             for(var i=0; i<t_list.length; i++){
-                 
-            	 var doneTime = t_list[i].doneTime.toFixed(2);
-            	 var totalTime = t_list[i].totalTime.toFixed(2); 
-            	 var rate = (doneTime/totalTime).toFixed(2); 
             	 
-            	 if(t_list[i].taskPriority == key){
-            		 keyTask.push(t_list[i]); 
-            		 keyMember.push(m_list[i]);
-            	 } else if(t_list[i].taskStatus == key){
-            		 keyTask.push(t_list[i]);
-            		 keyMember.push(m_list[i]);
-            	 } else if(m_list[i] == key){
-            		 keyMember.push(m_list[i]);
-            		 keyTask.push(t_list[i]);
-            	 } else if((key*1 <= rate*100) && (rate*100 < (key*1+20))){
-            		 keyTask.push(t_list[i]);
-            		 keyMember.push(m_list[i]);
-            	 }
-             }//for
+             } else {
+            	 
+	             /* 키워드별 Task 보기 */
+	             for(var i=0; i<t_list.length; i++){
+	                 
+	            	 var doneTime = t_list[i].doneTime.toFixed(2);
+	            	 var totalTime = t_list[i].totalTime.toFixed(2); 
+	            	 var rate = (doneTime/totalTime).toFixed(2); 
+	            	 
+	            	 if(t_list[i].taskPriority == key){
+	            		 keyTask.push(t_list[i]); 
+	            		 keyMember.push(m_list[i]);
+	            	 } else if(t_list[i].taskStatus == key){
+	            		 keyTask.push(t_list[i]);
+	            		 keyMember.push(m_list[i]);
+	            	 } else if(m_list[i] == key){
+	            		 keyMember.push(m_list[i]);
+	            		 keyTask.push(t_list[i]);
+	            	 } else if((key*1 <= rate*100) && (rate*100 < (key*1+20))){
+	            		 keyTask.push(t_list[i]);
+	            		 keyMember.push(m_list[i]);
+	            	 }
+	             }//for
             		 
-             drawSimpleNodeChart(p_name, keyTask, keyMember);
+                 drawSimpleNodeChart(p_name, keyTask, keyMember);
+             }
+            	 
+            	 
+            	 
+             
     	});
      }	   
              
@@ -395,7 +481,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		     		          + "<i class='halflings-icon white edit' onclick='editTask()'></i></a>"
 		     		          + "<a class='btn btn-danger' href='#'>"
 		     		          + "<i class='halflings-icon white trash' onclick='deleteTask()'></i></a>"
-		     		          + "<button class='btn btn-small btn-primary' onclick='updateWbs()'>SAVE</button>"
+		     		          + "<button class='btn btn-small btn-primary' onclick='updateTask()'>SAVE</button>"
 		     		          + "</td></tr>"
 		     		          + "<input type='hidden' id ='taskNo' value=" + item.taskNo + ">");
 		}); 
@@ -425,7 +511,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	     		          + "<i class='halflings-icon white edit' onclick='editTask()'></i></a>"
 	     		          + "<a class='btn btn-danger' href='#'>"
 	     		          + "<i class='halflings-icon white trash' onclick='deleteTask()'></i></a>"
-	     		          + "<button class='btn btn-small btn-primary' onclick='updateWbs()'>SAVE</button>"
+	     		          + "<button class='btn btn-small btn-primary' onclick='updateTask()'>SAVE</button>"
 	     		          + "</td></tr>"
 	     		          + "<input type='hidden' id ='taskNo' value=" + selectTask.taskNo + ">");
 	     
@@ -439,7 +525,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	}
 	
 /* TaskInfo 수정사항 저장하기 */
-	function updateWbs(){
+	function updateTask(){
 		 var taskNo = $("#taskNo").val();
 		 var taskName = $("#taskName").text(); 
 		 var taskContent = $("#taskContent").text();
@@ -451,7 +537,7 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 		 var doneTime = $("#doneTime").text();
 	 
 		$.ajax({
-	  		url: "/planbe/wbs/updateWbs",
+	  		url: "/planbe/wbs/updateTask",
 	  		type: "post",
 	  		data: {"projectNo" : p_no, 
 	  			   "taskNo": taskNo, 
@@ -562,6 +648,12 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 	
 <!-- ========================================================================================================================== -->
 
+				
+				
+				
+				
+				
+				
 								
 <!-- start : 프로젝트 리스트  -->			
 	<div class="row-fluid sortable">	
@@ -605,6 +697,9 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 			</div><!--/row-->
 <!-- end : 프로젝트 리스트  -->		    			
 				
+							
+							
+							
 								
 <!-- start: WBS 트리 박스 -->	
              <div class="row-fluid sortable">			   
@@ -630,16 +725,26 @@ function drawSimpleNodeChart(p_name, t_list, m_list) {
 							</div>
 <!-- end : 키워드 드롭다운 -->		
 
+
+
+
+
 <!-- WBS 삭제 / Gantt 링크 버튼   -->                                  
+               <div id="bbbttt" class="buttons" style="height: 20px"></div>
+               <hr/>
+               <div id="JSFiddle">
                           <div id="wordtree_explicit" style="width: 850px; height: 600px;"></div>	
+               </div>
 							    <button class="btn btn-small btn-danger" onclick="deleteWbs()">Delete WBS</button>
 							    <button class="btn btn-small btn-warning" onclick="showGantt()">Show Gantt</button>
+							<!--     <button class="btn btn-small btn-info" onclick="downloadWbs()">Download</button> -->
+					
 						  </div> <!-- content -->
 			      </div>
 			  </div>
 							
 <!-- end: WBS 트리 박스 -->
-	
+
 <!-- start: Task List 박스 -->	
 		<div class="row-fluid sortable">		
 				<div class="box span12">

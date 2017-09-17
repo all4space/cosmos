@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,10 +48,12 @@
 <style type="text/css"> #chart_div { overflow-y: scroll; height: 500px; } </style> 
 <script>
 
+
 	$(function(){
-		Gantt();
+		/* var projectNo = ${projectNo}
+		if(projectNo != null){ Gantt(); } */
 		google.charts.load('current', {'packages':['gantt']});
-		google.charts.setOnLoadCallback(drawChart);
+		google.charts.setOnLoadCallback(drawChart); 
 	})
 	
 function drawChart(GanttList, date) {
@@ -81,7 +82,7 @@ function drawChart(GanttList, date) {
   });// for each 
   
   var options = {
-    height: listSize*30,
+    height: listSize*40,
     gantt: {
       trackHeight: 30
     }
@@ -92,9 +93,22 @@ function drawChart(GanttList, date) {
   chart.draw(data, options);
 }
 
+/* 버튼 생성  */	
+	function drawButton(projectNo){
+		var date = ["'year'","'month'","'week'"];
+     	var button = '<input type = "button" class="btn" onclick="Gantt('+projectNo+','+date[0]+')" value = "year">';
+			button += '<input type = "button" class="btn" onclick="Gantt('+projectNo+','+date[1]+')" value = "month">';
+			button += '<input type = "button" class="btn" onclick="Gantt('+projectNo+','+date[2]+')" value = "week">';
+		 $(".btn-group").html(button);
+		
+ 		var address = ["'/planbe/task/taskForm'","'/planbe/wbs/wbsForm?projectNo="+projectNo+"'"];
+		var button2 = '<button class="btn btn-large btn-primary" onclick= "location.href ='+address[0]+'">수정</button>'
+			button2 += '<button class="btn btn-large btn-warning" onclick= "location.href ='+address[1]+'">「 WBS 」로 보기</button>';
+		$(".btn_group2").html(button2);
+	}
 
 /* Gantt 데이터 불러오기 */	
-	function Gantt(date){
+	function Gantt(projectNo,date){
 	var ad = null;	
 		switch(date){
 			case 'year' : ad = "/planbe/gantt/year"; break;
@@ -104,30 +118,16 @@ function drawChart(GanttList, date) {
 		$.ajax({
 		  		url: ad,
 		  		type: "post",
-		  		data: {"projectNo" : "${m_vo.projectNo}"},
+		  		data: {"projectNo" : projectNo},
 		  		datatype: "json",
 		  		success: function(result) {
                     var GanttList = result;
                     drawChart(GanttList,date);
-				}, // success
+                    drawButton(projectNo);
+				}, // success,
 		  		error: function() {	alert("통신 에------라!");	}
 		})
 	}
-	
-/* projectList 불러오기  */
-	function getProject(projectNo){
-		$.ajax({
-	  		url: "/planbe/project/getProject",
-	  		type: "post",
-	  		data: {"projectNo" : projectNo},
-	  		datatype: "json",
-	  		success: function(result) {
-	  			alert("성공~!");
-	  			vo = result;
-			}, // succes
-	  		error: function() {	alert("통신 에------라!");	}
-		})		
-}
 </script>
 
 <body>
@@ -177,15 +177,60 @@ function drawChart(GanttList, date) {
 				
 			<!-- Project List 페이지에서 하나의 프로젝트를 클릭하면, 해당 프로젝트의 projectNo을 넘기는 구조 -->
             
+<!-- 내가 소속된 Project List 추출   -->
+<div class="row-fluid sortable">		
+				<div class="box span12">
+					<div class="box-header" data-original-title>
+						<h2><i class="halflings-icon white user"></i><span class="break"></span>Project List</h2>
+						<div class="box-icon">
+							<a href="#" class="btn-setting"><i class="halflings-icon white wrench"></i></a>
+							<a href="#" class="btn-minimize"><i class="halflings-icon white chevron-up"></i></a>
+							<a href="#" class="btn-close"><i class="halflings-icon white remove"></i></a>
+						</div>
+					</div>
+					<div class="box-content" onTablet="span6" onDesktop="span5">
+						<table class="table table-striped table-bordered bootstrap-datatable datatable" >
+						  <thead>
+							  <tr>
+								  <th>ProjectName</th>
+								  <th>Project Content</th>
+								  <th>Project Status</th>
+								  <th>Start Date</th>
+								  <th>Due Date</th>
+								  <th>Authority</th>
+							  </tr>
+						  </thead>   
+						  <tbody>
+						  	<c:forEach items="${project}" var="project" varStatus="status">
+									<tr>
+										<td><button  class="btn btn-success" onclick="Gantt(${project.projectNo},'null')">${project.projectName}</button>
+											</td>
+										<td class="center">${project.projectContent}</td>
+										<td class="center">
+								<c:choose>
+						  			<c:when test="${project.projectStatus == 'Waiting'}">
+										<span class="label label-warning">${project.projectStatus}</span>
+						  			</c:when>
+						  			<c:when test="${project.projectStatus == 'Progress'}">
+						  				<span class="label label-success">${project.projectStatus}</span>
+						  			</c:when>
+						  			<c:otherwise>
+						  				<span class="label label-important">${project.projectStatus}</span>
+						  			</c:otherwise>
+								</c:choose>						  		
+										</td>
+										<td class="center">${project.startDate}</td>
+										<td class="center">${project.dueDate}</td>
+										<td class="center">${member[status.index].projectAuthority}</td>
+									</tr>
+						  	</c:forEach>
+						  </tbody>
+					  </table>            
+					</div>
+				</div><!--/span-->
+			</div><!--/row-->
+
 <!-- gantt -->            
-<%-- 	<c:forEach items="${taskList}" var="taskList">
-		${taskList.projectNo} --%>
-           
-<%-- 	</c:forEach> --%>
-			
-		
-							        
-			  <!-- 노드 정보 박스 -->				    
 			  <div class="row-fluid">
 				
 				<div class="box span12">
@@ -196,19 +241,12 @@ function drawChart(GanttList, date) {
 						<div class="box-content">
 						<div id="chart_div"></div> <!-- Gantt  -->
 						<div id="oneGroup">
-							<p class="btn-group">
-								  <input type = "button" class="btn" onclick="Gantt('year')" value = "year">
-								  <input type = "button" class="btn" onclick="Gantt('month')" value = "month">
-								  <input type = "button" class="btn" onclick="Gantt('week')" value = "week">
+							<p class="btn-group"><!-- 년월일 버튼  -->
 							</p>							
 						</div>
-							
 							<div class="box-content buttons">
-							<p>
-								<button class="btn btn-large btn-primary" onclick= "location.href ='/planbe/task/taskForm'">수정</button>
-								<button class="btn btn-large btn-warning" onclick= "location.href ='/planbe/wbs/wbsForm'">「 WBS 」로 보기</button>
-							</p>
-							</div>
+								<p class="btn_group2"></p>
+							</div> <!-- wbs연동  -->
 						</div>
 				</div><!--/span-->
 			</div><!--/row-->			
